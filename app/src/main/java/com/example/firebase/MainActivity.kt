@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
-import com.example.firebase.data.DataModel
+import com.example.firebase.databinding.ActivityMainBinding
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 
@@ -12,17 +12,21 @@ class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        //setContentView(R.layout.activity_main)
 
         // Crashlytics 로그 수집 활성화
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
 
-        val textView: TextView = findViewById(R.id.textView)
 
         mainViewModel.fetchPosts { post ->
-            textView.text = post.joinToString("\n") { post ->
+            binding.textView.text = post.joinToString("\n") { post ->
                 "${post.id}: ${post.title}"
             }
         }
