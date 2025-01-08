@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1057011348072",
+    "project_id": "kotlin-study-705e5",
+    "storage_bucket": "kotlin-study-705e5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057011348072:android:4218459bbbe44d879d81dd",
+        "android_client_info": {
+          "package_name": "com.example.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5rbf4gYfu7jxABVEq-lYMw1QslvQVe00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057011348072:android:965013635b6356a59d81dd",
+        "android_client_info": {
+          "package_name": "om.example.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5rbf4gYfu7jxABVEq-lYMw1QslvQVe00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
