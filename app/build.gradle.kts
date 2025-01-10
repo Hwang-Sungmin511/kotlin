@@ -87,5 +87,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // 코루틴
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // 리사이클러뷰
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
+
 }
