@@ -1,49 +1,73 @@
 package com.example.firebase
 
+import UserAdapter
 import android.os.Bundle
-import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.firebase.data.User
 import com.example.firebase.databinding.ActivityMainBinding
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.example.firebase.ui.adapter.PostAdapter
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 
 class MainActivity : ComponentActivity() {
 
-    private val mainViewModel: MainViewModel by viewModels()
-
     private lateinit var binding: ActivityMainBinding
+    private lateinit var dbHelper: DatabaseHelper
+    private lateinit var adapter: UserAdapter
 
-    private lateinit var postAdapter: PostAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //setContentView(R.layout.activity_main)
-
-        // Crashlytics 로그 수집 활성화
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-
-//        mainViewModel.fetchPosts { post ->
-//            binding.textView.text = post.joinToString("\n") { post ->
-//                "${post.id}: ${post.title}"
-//            }
-//        }
+        dbHelper = DatabaseHelper(this)
 
         // RecyclerView 초기화
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        postAdapter = PostAdapter(emptyList())
-        binding.recyclerView.adapter = postAdapter
+        adapter = UserAdapter(mutableListOf(), { user ->
+            dbHelper.deleteUser(user.id)
+            refreshUsers()
+            Toast.makeText(this, "Deleted: ${user.name}", Toast.LENGTH_SHORT).show()
+        }, { user ->
+            binding.editName.setText(user.name)
+            binding.buttonAdd.setOnClickListener {
+                val updatedName = binding.editName.text.toString()
+                if (updatedName.isNotEmpty()) {
+                    dbHelper.updateUser(User(user.id, updatedName))
+                    refreshUsers()
+                    binding.editName.text.clear()
+                    binding.buttonAdd.setOnClickListener { addUser() }
+                }
+            }
+        })
 
-        // 데이터 가져오기
-        mainViewModel.fetchPosts { posts ->
-            postAdapter = PostAdapter(posts)
-            binding.recyclerView.adapter = postAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
+
+        // "Add" 버튼 클릭 이벤트
+        binding.buttonAdd.setOnClickListener {
+            addUser()
         }
 
+        refreshUsers()
+    }
+
+    private fun addUser() {
+        val name = binding.editName.text.toString()
+        if (name.isNotEmpty()) {
+            dbHelper.insertUser(User(0, name))
+            refreshUsers()
+            binding.editName.text.clear()
+        } else {
+            Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun refreshUsers() {
+        val users = dbHelper.getAllUsers()
+        adapter.updateData(users)
     }
 }

@@ -1,12 +1,10 @@
-package com.example.firebase
+package com.example.firebase.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.firebase.data.Post
 import com.example.firebase.databinding.ItemPostBinding
-import com.google.common.collect.Lists
 
 class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
