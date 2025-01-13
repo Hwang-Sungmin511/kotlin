@@ -8,6 +8,9 @@ plugins {
     // Add the Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics")
 
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -91,5 +94,9 @@ dependencies {
 
     // 리사이클러뷰
     implementation("androidx.recyclerview:recyclerview:1.3.1")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
 
 }
