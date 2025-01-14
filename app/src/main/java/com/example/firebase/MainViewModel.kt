@@ -1,5 +1,7 @@
 package com.example.firebase
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.firebase.data.Post
@@ -13,6 +15,10 @@ import kotlinx.coroutines.withContext
  *
  * */
 class MainViewModel : ViewModel() {
+
+    private val _notiMessage = MutableLiveData<String>()
+    val notiMessage: LiveData<String> get() = _notiMessage
+
     fun fetchPosts(onResult: (List<Post>) -> Unit) {
         viewModelScope.launch {
             try {
@@ -20,8 +26,11 @@ class MainViewModel : ViewModel() {
                     RetrofitClient.apiService.getPosts()
                 }
                 onResult(posts)
+                
+                _notiMessage.value = "성공"
             } catch (e: Exception) {
                 throw RuntimeException("This is a test crash for Crashlytics!")
+                _notiMessage.value = "실패"
             }
         }
     }

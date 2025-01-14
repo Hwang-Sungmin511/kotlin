@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                    100
+                    9999
                 )
             }
         }
@@ -146,6 +146,28 @@ class MainActivity : ComponentActivity() {
         override fun onServiceDisconnected(name: ComponentName?) {
             crawlingService = null
             isServiceBound = false
+        }
+    }
+
+    // 권한 요청 결과 처리
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+        deviceId: Int
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
+
+        Log.d("hsm511", "onRequestPermissionsResult : requestCode=$requestCode")
+
+        if (requestCode == 9999) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notification permission granted.", Toast.LENGTH_SHORT).show()
+                Log.d("hsm511", "Notification permission granted.")
+            } else {
+                Toast.makeText(this, "Notification permission denied.", Toast.LENGTH_SHORT).show()
+                Log.d("hsm511", "Notification permission denied.")
+            }
         }
     }
 }
