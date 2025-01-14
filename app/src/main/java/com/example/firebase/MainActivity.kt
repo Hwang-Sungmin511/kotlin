@@ -8,28 +8,29 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebase.data.User
 import com.example.firebase.databinding.ActivityMainBinding
 import com.example.firebase.service.CrawlingService
-import com.example.firebase.ui.adapter.PostAdapter
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.example.firebase.ui.fragment.CrawlingFragment
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var adapter: UserAdapter
     private var crawlingService: CrawlingService? = null
     private var isServiceBound = false
+
+    private lateinit var crawlingFragment: CrawlingFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +63,16 @@ class MainActivity : ComponentActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
+        // 프래그먼트 초기화
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        if (fragment is CrawlingFragment) {
+            crawlingFragment = fragment
+        } else {
+            crawlingFragment = CrawlingFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, crawlingFragment)
+                .commit()
+        }
 
         // POST_NOTIFICATIONS 권한 요청
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // API 33 이상 확인
@@ -86,6 +97,7 @@ class MainActivity : ComponentActivity() {
         // 크롤링 서비스 시작 버튼
         binding.buttonStartCrawling.setOnClickListener {
             val intent = Intent(this, CrawlingService::class.java)
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent) // Foreground Service 시작
             } else {
@@ -93,11 +105,20 @@ class MainActivity : ComponentActivity() {
             }
             // 서비스와 바인딩된 상태라면 크롤링 시작
             if (isServiceBound) {
-                crawlingService?.startCrawling()
+                startCrawlingLogs()
+                //crawlingService?.startCrawling(crawlingFragment)
+                //crawlingFragment.addLog("Crawling started...")
             } else {
                 Toast.makeText(this, "Service is not yet bound. Please try again.", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Stop Crawling 버튼 클릭
+        binding.buttonClearCrawling.setOnClickListener {
+            // CrawlingFragment 제거
+            crawlingFragment.clearLogs()
+        }
+
         refreshUsers()
     }
 
@@ -154,9 +175,7 @@ class MainActivity : ComponentActivity() {
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray,
-        deviceId: Int
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
 
         Log.d("hsm511", "onRequestPermissionsResult : requestCode=$requestCode")
 
@@ -169,5 +188,19 @@ class MainActivity : ComponentActivity() {
                 Log.d("hsm511", "Notification permission denied.")
             }
         }
+    }
+
+    fun startCrawlingLogs(){
+        val handler = Handler(mainLooper)
+        val runnable = object : Runnable {
+            override fun run() {
+                if (isServiceBound) {
+                    val logMessage = "Crawling log at ${System.currentTimeMillis()}"
+                    crawlingFragment.addLog(logMessage)
+                    handler.postDelayed(this, 1000)  // 1초 간격으로 추가
+                }
+            }
+        }
+        handler.post(runnable)
     }
 }

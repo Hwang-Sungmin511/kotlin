@@ -21,16 +21,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add User"/>
-        <Button
-                android:id="@+id/buttonStartCrawling"
+        <!-- Start Crawling과 Stop Crawling 버튼을 가로로 배치 -->
+        <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Start Crawling"/>
+                android:layout_marginTop="16dp"
+                android:weightSum="2">
+
+            <Button
+                    android:id="@+id/buttonStartCrawling"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Start Crawling"/>
+
+            <Button
+                    android:id="@+id/buttonClearCrawling"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Clear Crawling"/>
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"/>
+
+        <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
     </LinearLayout>
 </layout>

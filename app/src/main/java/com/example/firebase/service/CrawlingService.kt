@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.firebase.ui.fragment.CrawlingFragment
 import kotlinx.coroutines.*
 
 class CrawlingService : Service() {
@@ -66,21 +67,25 @@ class CrawlingService : Service() {
         startForeground(1, notification)
     }
 
-    fun startCrawling() {
+    fun startCrawling(fragment: CrawlingFragment) {
         coroutineScope.launch {
             try {
                 // 크롤링 작업 수행
                 for (i in 1..10) {
-                    Log.d("CrawlingService", "Crawling data... $i")
+                    val logMessage = "Crawling data... $i"
+                    fragment.addLog(logMessage) // Fragment에 로그 추가
                     delay(1000) // 1초 대기
                 }
+                val completionMessage = "Crawling completed"
+                fragment.addLog(completionMessage)
                 Log.d("CrawlingService", "Crawling completed")
 
                 // 크롤링 완료 알림 표시
                 showCompletionNotification()
 
             } catch (e: Exception) {
-                Log.e("CrawlingService", "Error in crawling: ${e.message}")
+                val errorMessage = "Error in crawling: ${e.message}"
+                fragment.addLog(errorMessage)
             }
         }
     }
