@@ -11,6 +11,8 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
 
+    id ("kotlin-android-extensions")
+
 }
 
 android {
@@ -98,5 +100,10 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
+
+    // 크롤링
+    implementation ("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation ("io.reactivex.rxjava2:rxkotlin:2.4.0")
+    implementation ("org.jsoup:jsoup:1.13.1")
 
 }
