@@ -4,6 +4,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.firebase.data.User
 import com.example.firebase.databinding.ItemUserBinding
 
+
+// 어댑터 안에 inner class 로 뷰홀더 생성
 class UserAdapter(
     private val users: MutableList<User>,
     private val onDeleteClick: (User) -> Unit,

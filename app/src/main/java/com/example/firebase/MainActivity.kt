@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var crawlingFragment: CrawlingFragment
 
+    private lateinit var handler: Handler
+    var crawlingRunnable: Runnable? = null // 초기값을 null 설정
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,6 +42,13 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        /**
+         * Handler는 onCreate 메서드나 다른 Activity의 생명주기 메서드에서 초기화되야 한다.
+         * */
+        // Handler 초기화
+        handler = Handler(mainLooper)
 
         dbHelper = DatabaseHelper(this)
 
@@ -116,9 +126,9 @@ class MainActivity : AppCompatActivity() {
         // Stop Crawling 버튼 클릭
         binding.buttonClearCrawling.setOnClickListener {
             // CrawlingFragment 제거
+            stopCrawlingLog()
             crawlingFragment.clearLogs()
         }
-
         refreshUsers()
     }
 
@@ -190,9 +200,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun startCrawlingLogs(){
-        val handler = Handler(mainLooper)
-        val runnable = object : Runnable {
+
+    fun startCrawlingLogs() {
+        if (crawlingRunnable != null) {
+            return
+        }
+
+        crawlingRunnable = object : Runnable {
             override fun run() {
                 if (isServiceBound) {
                     val logMessage = "Crawling log at ${System.currentTimeMillis()}"
@@ -201,6 +215,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        handler.post(runnable)
+        crawlingRunnable?.let { handler.post(it) }
+    }
+
+    fun stopCrawlingLog() {
+        crawlingRunnable?.let { handler.removeCallbacks(it) }
+        crawlingRunnable = null
     }
 }
