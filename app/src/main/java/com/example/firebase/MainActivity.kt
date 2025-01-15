@@ -20,8 +20,11 @@ import com.example.firebase.data.User
 import com.example.firebase.databinding.ActivityMainBinding
 import com.example.firebase.service.CrawlingService
 import com.example.firebase.ui.fragment.CrawlingFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -32,7 +35,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var crawlingFragment: CrawlingFragment
 
-    private lateinit var handler: Handler
+    // 핸들러를 의존성 주입해서 사용
+    @Inject
+    lateinit var handler: Handler
+
     var crawlingRunnable: Runnable? = null // 초기값을 null 설정
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,7 +154,6 @@ class MainActivity : AppCompatActivity() {
             isServiceBound = false
         }
     }
-
 
     private fun addUser() {
         val name = binding.editName.text.toString()
